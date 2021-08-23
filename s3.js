@@ -20,12 +20,23 @@ function uploadFile(file) {
   const uploadParams = {
     Bucket: bucketName,
     Body: fileStream,
-    Key: file.filename
+    Key: file.originalname
   }
 
   return s3.upload(uploadParams).promise()
 }
 exports.uploadFile = uploadFile
+
+function deleteFile(file){
+  //const fileStream = fs.createReadStream(file.path)
+
+  const deleteParams = {
+    Bucket: bucketName,
+    Key: 'KakaoTalk_20210807_184414709.png'
+  }
+  return s3.deleteObject(deleteParams).promise()
+}
+exports.deleteFile = deleteFile
 
 
 // downloads a file from s3
@@ -38,3 +49,4 @@ function getFileStream(fileKey) {
   return s3.getObject(downloadParams).createReadStream()
 }
 exports.getFileStream = getFileStream
+

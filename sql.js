@@ -3,7 +3,7 @@ const express=  require('express')
 const fs = require('fs')
 const multer = require('multer')
 const app = express()
-const {uploadFile, getFileStream } = require('./s3.js')
+const {uploadFile, getFileStream, deleteFile } = require('./s3.js')
 const multerS3 = require('multer-s3');
 const data = fs.readFileSync('./database.json')
 const conf = JSON.parse(data)
@@ -39,6 +39,7 @@ db.connect((err)=>{
 app.get('', (req,res)=>{
     let sql = "SELECT * FROM POST"
     db.query(sql, (err, result)=>{
+        console.log(result)
         res.send(result)
     })
 })
@@ -85,15 +86,21 @@ app.get('/update', (req, res)=>{
     })
 })
 
-app.get('/delete', (req, res)=>{
+app.get('/delete', async(req, res)=>{
     let sql = 
-    'DELETE FROM POST WHERE ID = 3'
-    db.query(sql, (err, result)=>{
-        if(err)
-            throw err;
-        console.log(result)
-        res.render('index.html')
-    })
+    'DELETE FROM POST WHERE ID = 16'
+    try{
+        const result = await deleteFile('KakaoTalk_20210807_184414709.png')
+        db.query(sql, (err, result)=>{
+            if(err)
+                throw err;
+            res.render('index.html')
+        })
+    }
+    catch(error)
+    {
+        console.log(error)
+    }
 })
 
 app.listen(3000, ()=>{
