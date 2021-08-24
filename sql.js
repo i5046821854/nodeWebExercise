@@ -11,6 +11,8 @@ const bodyparser = require('body-parser')
 
 app.set("view engine", "ejs");
 
+let skkclub = []
+
 // "ejs"로 변경 후 "html" 파일로 열 수 있게 렌더링
 app.engine("html", require("ejs").renderFile);
 
@@ -22,6 +24,7 @@ app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
 
 const aws = require('aws-sdk');
+const { CloudFront } = require('aws-sdk')
 const s3 = new aws.S3()
 const upload = multer({
     dest: "logo"
@@ -44,7 +47,13 @@ db.connect((err)=>{
 app.get('', (req,res)=>{
     let sql = "SELECT * FROM POST"
     db.query(sql, (err, result)=>{
-        res.render("index.html", {result : JSON.parse(JSON.stringify(result))})
+        res.render("index.html", 
+        {
+            result : JSON.parse(JSON.stringify(result)),
+            bucket : process.env.AWS_BUCKET_NAME,
+            region : process.env.AWS_BUCKET_REGION
+            
+        })
     })
 })
 
@@ -53,17 +62,24 @@ app.get('/create', upload.single('logo'), (req,res)=>{
     res.render('create.html')
 })
 
+async function copy(){
+    let sql = "SELECT * FROM POST"
+    return db.query(sql, (err, result)=>{
+        skkclub = JSON.stringify(result)
+        console.log(skkclub + "최고")
+    })
+}
+
 app.post('/add',upload.single("logo"), async(req, res)=>{
-    console.log(req.body)
-    console.log(req.file)
-    console.log(req.body.name)
     let sql = 
     `INSERT INTO POST (name, category, campus, author, logo ) VALUES ("${req.body.name}", "${req.body.category}", "${req.body.campus}", "${req.body.author}", "${req.file.originalname}")`
-    const result = await uploadFile(req.file)
-    db.query(sql, (err, result)=>{
+    const result2 = await uploadFile(req.file)
+    db.query(sql, async(err, result)=>{
         if(err)
             throw err;
-        console.log(result)
+        await copy()
+        console.log("??")
+        console.log(skkclub + "ELDY")
         res.redirect('/')
     })
 })
@@ -97,20 +113,27 @@ app.post('/update',upload.single("logo"), async(req, res)=>{
 })
 
 
-app.get('/update', (req, res)=>{
-    res.render("update.html")
+app.get('/update', async(req, res)=>{
+    console.log("id: " + req.query.id)
+    await copy()
+    console.log(skkclub + "ELDY")
+        console.log(skkclub)
+    
+    console.log("!!")
+    res.render("update.html", {
+
+    })
 })
 
 app.get('/delete', async(req, res)=>{
     let sql = 
     'DELETE FROM POST WHERE ID = 16'
     try{
-        console.log("asdsadsadsa씨발")
-        const result = await deleteFile('KakaoTalk_20210807_184414709.png')
+        //const result = await deleteFile('KakaoTalk_20210807_184414709.png')
         db.query(sql, (err, result)=>{
             if(err)
                 throw err;
-            res.render('index.html')
+            res.redirect('/')
         })
     }
     catch(error)
