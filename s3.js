@@ -34,6 +34,7 @@ function deleteFile(file){
     Bucket: bucketName,
     Key: 'KakaoTalk_20210807_184414709.png'
   }
+  console.log("asdsad")
   return s3.deleteObject(deleteParams).promise()
 }
 exports.deleteFile = deleteFile

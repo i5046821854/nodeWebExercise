@@ -9,6 +9,11 @@ const data = fs.readFileSync('./database.json')
 const conf = JSON.parse(data)
 const bodyparser = require('body-parser')
 
+app.set("view engine", "ejs");
+
+// "ejs"로 변경 후 "html" 파일로 열 수 있게 렌더링
+app.engine("html", require("ejs").renderFile);
+
 const PORT = 3000 || process.env.PORT
 app.use(bodyparser.json())
 app.use(bodyparser.urlencoded({extended: true}))
@@ -39,8 +44,7 @@ db.connect((err)=>{
 app.get('', (req,res)=>{
     let sql = "SELECT * FROM POST"
     db.query(sql, (err, result)=>{
-        console.log(result)
-        res.send(result)
+        res.render("index.html", {result : JSON.parse(JSON.stringify(result))})
     })
 })
 
@@ -75,9 +79,15 @@ app.get('/add', (req, res)=>{
     })
 })
 
-app.get('/update', (req, res)=>{
+app.post('/update',upload.single("logo"), async(req, res)=>{
+    console.log(req.body)
+    console.log(req.file)
+    console.log(req.body.name)
+    console.log(req.body.id)
+    id = Number(req.body.id)
     let sql = 
-    'UPDATE POST SET name = "멋사3", category = "코딩2", campus = "율전", author = "이영신", logo = "logo2.png" WHERE ID = 1'
+    `UPDATE POST SET name = "${req.body.name}", category = "${req.body.category}", campus = "${req.body.campus}", author = "${req.body.author}", logo = "${req.file.originalname}" WHERE ID = ${id}`
+    const result = await uploadFile(req.file)
     db.query(sql, (err, result)=>{
         if(err)
             throw err;
@@ -86,10 +96,16 @@ app.get('/update', (req, res)=>{
     })
 })
 
+
+app.get('/update', (req, res)=>{
+    res.render("update.html")
+})
+
 app.get('/delete', async(req, res)=>{
     let sql = 
     'DELETE FROM POST WHERE ID = 16'
     try{
+        console.log("asdsadsadsa씨발")
         const result = await deleteFile('KakaoTalk_20210807_184414709.png')
         db.query(sql, (err, result)=>{
             if(err)
