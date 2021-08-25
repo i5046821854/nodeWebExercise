@@ -10,37 +10,40 @@
     </head>
     <body>
         <h1> 동아리 목록 </h1>
-        <table id = "clubList" style="width:75%">
-        <tr>
-            <th>이름</th>
-            <th>분류</th>
-            <th>캠퍼스</th>
-            <th>작성자</th>
-        </tr>
-        <% result.forEach(each => { %>
+        <table id = "table" style="width:75%">
+        <thead>
+            <tr>
+                <td>이름</td>
+                <td>분류</td>
+                <td>캠퍼스</td>
+                <td>작성자</td>
+                <td>로고</td>
             </tr>
-            <td class="hidden-col"><%= each.id%></td>
-            <td><%= each.name%></td>
-            <td><%= each.category%></td>
-            <td><%= each.campus%></td>
-            <td><%= each.author%></td>
-            <td>https://<%= bucket%>.s3.<%= region %>.amazonaws.com/<%= each.logo%></td>
-            <td><input type = "button" value = "수정" style="width:50%; height: 50%" onclick = "moveEditPage()"><input type = "button" value = "삭제" style="width:50%; height: 50%" onclick = "moveDeletePage()"></td>
-            </tr>
-        <% }) %>
+        </thead>
+        <tbody>
+            <% result.forEach(each => { %>
+                </tr>
+                <td class="hidden-col"><%= each.id%></td>
+                <td><%= each.name%></td>
+                <td><%= each.category%></td>
+                <td><%= each.campus%></td>
+                <td><%= each.author%></td>
+                <td>https://<%= bucket%>.s3.<%= region %>.amazonaws.com/<%= each.logo%></td>
+                <td><input type = "button" class = "upd" value = "수정" style="width:50%; height: 50%" onclick = "moveEditPage()"><input type = "button" class = "del" value = "삭제" style="width:50%; height: 50%" onclick = "moveDeletePage()"></td>
+                </tr>
+            <% }) %>
+        </tbody>
         </table>
-    <script type="text/javascript">
-        function moveEditPage(){
-            const clubList = document.getElementById('clubList')
-            let param = 2;
-            for(let i = 1; i<clubList.rows.length; i++)
-            {
-                clubList.rows[i].cells[4].onclick = function(){
-                    param = clubList.rows[i].cells[0]
-                }
-            }
-            location.href = '/update?id=' + param
+        <script type = "text/javascript">
+            function moveEditPage(){
+            location.href = '/update?id=2'
         }
+            function moveDeletePage(){
+            location.href = '/delete?id=4'
+        }
+        </script>
+    <script type="text/javascript">
+        
     </script>
     </body>
 </html>

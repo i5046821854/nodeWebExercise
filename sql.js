@@ -77,8 +77,16 @@ app.post('/add',upload.single("logo"), async(req, res)=>{
     db.query(sql, async(err, result)=>{
         if(err)
             throw err;
-        await copy()
-        console.log("??")
+        console.log(result.insertId)
+        const club = { 
+            id : result.insertId,
+            name: req.body.name,
+            category : req.body.name,
+            campus : req.body.campus,
+            author : req.body.author,
+            logo : req.file.originalname
+        }
+        skkclub.push(JSON.stringify(club))
         console.log(skkclub + "ELDY")
         res.redirect('/')
     })
@@ -96,10 +104,6 @@ app.get('/add', (req, res)=>{
 })
 
 app.post('/update',upload.single("logo"), async(req, res)=>{
-    console.log(req.body)
-    console.log(req.file)
-    console.log(req.body.name)
-    console.log(req.body.id)
     id = Number(req.body.id)
     let sql = 
     `UPDATE POST SET name = "${req.body.name}", category = "${req.body.category}", campus = "${req.body.campus}", author = "${req.body.author}", logo = "${req.file.originalname}" WHERE ID = ${id}`
@@ -115,19 +119,18 @@ app.post('/update',upload.single("logo"), async(req, res)=>{
 
 app.get('/update', async(req, res)=>{
     console.log("id: " + req.query.id)
-    await copy()
-    console.log(skkclub + "ELDY")
-        console.log(skkclub)
-    
-    console.log("!!")
+    const club = skkclub.forEach(each=>{
+        return each.id == req.query.id
+    })
     res.render("update.html", {
 
     })
 })
 
 app.get('/delete', async(req, res)=>{
+    id = req.query.id
     let sql = 
-    'DELETE FROM POST WHERE ID = 16'
+    `DELETE FROM POST WHERE ID = ${id}`
     try{
         //const result = await deleteFile('KakaoTalk_20210807_184414709.png')
         db.query(sql, (err, result)=>{
