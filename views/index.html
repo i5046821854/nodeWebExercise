@@ -29,7 +29,7 @@
                 <td><%= each.campus%></td>
                 <td><%= each.author%></td>
                 <td>https://<%= bucket%>.s3.<%= region %>.amazonaws.com/<%= each.logo%></td>
-                <td><input type = "button" class = "upd" value = "수정" style="width:50%; height: 50%" onclick = "moveEditPage()"><input type = "button" class = "del" value = "삭제" style="width:50%; height: 50%" onclick = "moveDeletePage()"></td>
+                <td><input type = "button" class = "upd" value = "수정" style="width:50%; height: 50%" onclick = "moveEditPage(<%= each.id%>)"><input type = "button" class = "del" value = "삭제" style="width:50%; height: 50%" onclick = "moveDeletePage("<%= each.id%>"></td>
                 </tr>
             <% }) %>
         </tbody>
