@@ -29,12 +29,12 @@ function uploadFile(file) {
 
 exports.uploadFile = uploadFile
 
-function deleteFile(file){
+function deleteFile(filekey){
   //const fileStream = fs.createReadStream(file.path)
 
   const deleteParams = {
     Bucket: bucketName,
-    Key: 'KakaoTalk_20210807_184414709.png'
+    Key: filekey
   }
   console.log("asdsad")
   return s3.deleteObject(deleteParams).promise()
