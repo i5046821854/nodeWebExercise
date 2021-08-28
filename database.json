@@ -1,7 +1,0 @@
-{
-    "host":"lee-test.cdga0jdfgjjn.ap-northeast-2.rds.amazonaws.com",
-    "user": "LEE",
-    "password" : "durtka10221",
-    "post" : "3306",
-    "database" : "database1"
-}
