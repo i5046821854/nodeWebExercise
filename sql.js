@@ -96,6 +96,32 @@ app.get('/update', async(req, res)=>{
     })
 })
 
+app.get('/another', (req,res)=>{
+    let sql = "INSERT INTO CLUBLIST (campus, korName, engName, cnName, DIV1, DIV2, DIV3,logo,est,representative,repContact,emerCont, website1, website2,blocked, blockEU,auth) VALUES ('명륜','중앙동아리','','','중앙동아리','평면예술','서예', 'https://admin.skklub.com/img/logo/69.jpg','1963','조윤서','	01075596189','','https://www.instagram.com/skku.seodo','',1,'', 3)"
+    db.query(sql, async(err, result)=>{
+        if(err)
+            throw err;
+        res.send('good')
+    })
+})
+
+app.get('/getOld', (req,res)=>{
+    let sql = "select * from CLUB_OLD"
+    db.query(sql, async(err, result)=>{
+        if(err)
+            throw err;
+        res.send(result)
+    })
+})
+
+app.get('/getanother', (req,res)=>{
+    let sql = "select * from CLUBLIST"
+    db.query(sql, async(err, result)=>{
+        if(err)
+            throw err;
+        res.send(result)
+    })
+})
 
 app.post('/update',upload.single("logo"), async(req, res)=>{
     id = Number(req.body.id)
