@@ -1,12 +1,12 @@
 const mysql = require('mysql')
-const express=  require('express')
+const express = require('express')
 const app = express()
 
 const fs = require('fs')
 const multer = require('multer')
 const multerS3 = require('multer-s3');
 
-const {uploadFile, getFileStream, deleteFile } = require('./s3.js')
+const { uploadFile, getFileStream, deleteFile } = require('./s3.js')
 const data = fs.readFileSync('./database.json')
 const conf = JSON.parse(data)
 
@@ -20,9 +20,9 @@ app.engine("html", require("ejs").renderFile);
 const PORT = 3000 || process.env.PORT
 
 app.use(bodyparser.json())
-app.use(bodyparser.urlencoded({extended: true}))
+app.use(bodyparser.urlencoded({ extended: true }))
 
-app.set('view engine', 'ejs'); 
+app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
 
 const aws = require('aws-sdk');
@@ -36,124 +36,124 @@ const upload = multer({
 
 const db = mysql.createConnection({
     host: conf.host,
-    user : conf.user,
+    user: conf.user,
     password: conf.password,
-    database : conf.database 
+    database: conf.database
 })
 
-db.connect((err)=>{
-    if(err)
-    throw err;
-    console.log("connected")   
+db.connect((err) => {
+    if (err)
+        throw err;
+    console.log("connected")
 })
 
-app.get('', (req,res)=>{
+app.get('', (req, res) => {
     let sql = "SELECT * FROM POST"
-    db.query(sql, (err, result)=>{
-        res.render("index.html", 
-        {
-            result : JSON.parse(JSON.stringify(result)),
-            bucket : process.env.AWS_BUCKET_NAME,
-            region : process.env.AWS_BUCKET_REGION
-            
+    db.query(sql, (err, result) => {
+        res.render("index.html", {
+            result: JSON.parse(JSON.stringify(result)),
+            bucket: process.env.AWS_BUCKET_NAME,
+            region: process.env.AWS_BUCKET_REGION
+
         })
     })
 })
 
 
 
-async function copy(){
+async function copy() {
     let sql = "SELECT * FROM POST"
-    return db.query(sql, (err, result)=>{
+    return db.query(sql, (err, result) => {
         skkclub = JSON.stringify(result)
         console.log(skkclub + "최고")
     })
 }
 
-app.get('/create', upload.single('logo'), (req,res)=>{
+app.get('/create', upload.single('logo'), (req, res) => {
     res.render('create.html')
 })
 
-app.post('/add',upload.single("logo"), async(req, res)=>{
-    let sql = 
-    `INSERT INTO POST (name, category, campus, author, logo ) VALUES ("${req.body.name}", "${req.body.category}", "${req.body.campus}", "${req.body.author}", "${req.file.originalname}")`
+app.post('/add', upload.single("logo"), async(req, res) => {
+    let sql =
+        `INSERT INTO POST (name, category, campus, author, logo ) VALUES ("${req.body.name}", "${req.body.category}", "${req.body.campus}", "${req.body.author}", "${req.file.originalname}")`
     const result2 = await uploadFile(req.file)
-    db.query(sql, async(err, result)=>{
-        if(err)
+    db.query(sql, async(err, result) => {
+        if (err)
             throw err;
         res.redirect('/')
     })
 })
 
 
-app.get('/update', async(req, res)=>{
+app.get('/update', async(req, res) => {
     console.log("id: " + req.query.id)
-    /*const club = skkclub.forEach(each=>{
-        return each.id == req.query.id
-    })*/
+        /*const club = skkclub.forEach(each=>{
+            return each.id == req.query.id
+        })*/
     res.render("update.html", {
 
     })
 })
 
-app.get('/another', (req,res)=>{
+app.get('/another', (req, res) => {
     let sql = "INSERT INTO CLUBLIST (campus, korName, engName, cnName, DIV1, DIV2, DIV3,logo,est,representative,repContact,emerCont, website1, website2,blocked, blockEU,auth) VALUES ('명륜','중앙동아리','','','중앙동아리','평면예술','서예', 'https://admin.skklub.com/img/logo/69.jpg','1963','조윤서','	01075596189','','https://www.instagram.com/skku.seodo','',1,'', 3)"
-    db.query(sql, async(err, result)=>{
-        if(err)
+    db.query(sql, async(err, result) => {
+        if (err)
             throw err;
         res.send('good')
     })
 })
 
-app.get('/getOld', (req,res)=>{
+app.get('/getOld', (req, res) => {
     let sql = "select * from CLUB_OLD"
-    db.query(sql, async(err, result)=>{
-        if(err)
+    db.query(sql, async(err, result) => {
+        if (err)
             throw err;
         res.send(result)
     })
 })
 
-app.get('/getanother', (req,res)=>{
-    let sql = "select * from CLUBLIST"
-    db.query(sql, async(err, result)=>{
-        if(err)
+app.get('/getanother', (req, res) => {
+    let sql = "select * from CLUB_OLD"
+    db.query(sql, async(err, result) => {
+        if (err)
             throw err;
-        res.send(result)
+        //console.log(result)
+        res.render('dataTable.html', {
+            data: result
+        })
     })
 })
 
-app.post('/update',upload.single("logo"), async(req, res)=>{
+app.post('/update', upload.single("logo"), async(req, res) => {
     id = Number(req.body.id)
-    let sql = 
-    `UPDATE POST SET name = "${req.body.name}", category = "${req.body.category}", campus = "${req.body.campus}", author = "${req.body.author}", logo = "${req.file.originalname}" WHERE ID = ${id}`
+    let sql =
+        `UPDATE POST SET name = "${req.body.name}", category = "${req.body.category}", campus = "${req.body.campus}", author = "${req.body.author}", logo = "${req.file.originalname}" WHERE ID = ${id}`
     const result = await uploadFile(req.file)
-    db.query(sql, (err, result)=>{
-        if(err)
+    db.query(sql, (err, result) => {
+        if (err)
             throw err;
         console.log(result)
         res.redirect('/')
     })
 })
 
-app.get('/delete', async(req, res)=>{
+app.get('/delete', async(req, res) => {
     id = req.query.id
-    let sql = 
-    `DELETE FROM POST WHERE ID = ${id}`
-    try{
+    let sql =
+        `DELETE FROM POST WHERE ID = ${id}`
+    try {
         //const result = await deleteFile('KakaoTalk_20210807_184414709.png')
-        db.query(sql, (err, result)=>{
-            if(err)
+        db.query(sql, (err, result) => {
+            if (err)
                 throw err;
             res.redirect('/')
         })
-    }
-    catch(error)
-    {
+    } catch (error) {
         console.log(error)
     }
 })
 
-app.listen(3000, ()=>{
+app.listen(3000, () => {
     console.log("server is on " + PORT)
 })
