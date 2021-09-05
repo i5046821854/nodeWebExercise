@@ -48,7 +48,7 @@ db.connect((err) => {
 })
 
 app.get('', (req, res) => {
-    let sql = "SELECT * FROM POST"
+    let sql = "SELECT * FROM CLUBLIST"
     db.query(sql, (err, result) => {
         res.render("index.html", {
             result: JSON.parse(JSON.stringify(result)),
@@ -106,23 +106,15 @@ app.get('/another', (req, res) => {
 
 app.get('/getOld', (req, res) => {
     let sql = "select * from CLUB_OLD"
-    db.query(sql, async(err, result) => {
+    db.query(sql, async(err, data) => {
         if (err)
             throw err;
-        res.send(result)
+        res.send((JSON.stringify(data)))
     })
 })
 
 app.get('/getanother', (req, res) => {
-    let sql = "select * from CLUB_OLD"
-    db.query(sql, async(err, result) => {
-        if (err)
-            throw err;
-        //console.log(result)
-        res.render('dataTable.html', {
-            data: result
-        })
-    })
+    res.render('dataTable.html')
 })
 
 app.post('/update', upload.single("logo"), async(req, res) => {

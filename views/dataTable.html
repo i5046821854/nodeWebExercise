@@ -6,21 +6,65 @@
         <style>
             table, th, td { border: 1px solid black; border-collapse: collapse }
             .hidden-col {display: none}
+                   button {
+          background-color: #F9B514;
+          padding: 5px 10px;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+
+        .modal {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .modal .bg {
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        .modalBox {
+          position: absolute;
+          background-color: #fff;
+          width: 400px;
+          height: 200px;
+          padding: 15px;
+        }
+
+        .modalBox button {
+          display: block;
+          width: 80px;
+          margin: 0 auto;
+        }
+
+        .hidden {
+          display: none;
+        }
         </style>
         <script src="http://code.jquery.com/jquery-latest.js"></script>
         <link rel="stylesheet" href="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.css"/> 
         <script src="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.js"></script>
         <script>
-        jQuery(function($){
+        $(document).ready(function() {
             $("#table").DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: {
-                    url: '/sql/getanother',
-                    type: 'GET',
-                    dataSrc : ''    
+                "processing": true,
+                "serverSide": false,
+                "ajax": {
+                    url: '/getOld',
+                    type: 'GET',  
+                    dataSrc: function (receivedData) {
+                        console.log(receivedData)
+                        return receivedData
+                    }
                 },
-                columns:[
+                "columns":[
                     {data:'cname'},
                     {data:'category1'},
                     {data:'category2'},
@@ -44,12 +88,28 @@
             </tr>
         </thead>
         </table>
-        <script type = "text/javascript">
-            function moveEditPage(){
-            location.href = '/update?id=2'
+        <button class="openBtn">모달창 open</button>
+        <div class="modal hidden">
+        <div class="bg"></div>
+        <div class="modalBox">
+            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Consectetur quam nobis quis corrupti amet maxime neque, optio, in illo, voluptatibus consequuntur! Rerum quo ea nulla qui, maxime consectetur magni soluta!</p>
+            <button class="closeBtn">✖</button>
+        </div>
+        </div>
+
+        <script>
+        const open = () => {
+            document.querySelector(".modal").classList.remove("hidden");
         }
-            function moveDeletePage(){
-            location.href = '/delete?id=2'
+
+        const close = () => {
+            document.querySelector(".modal").classList.add("hidden");
         }
+
+        document.querySelector(".openBtn").addEventListener("click", open);
+        document.querySelector(".closeBtn").addEventListener("click", close);
+        document.querySelector(".bg").addEventListener("click", close);
+
+        </script>
     </body>
 </html>
