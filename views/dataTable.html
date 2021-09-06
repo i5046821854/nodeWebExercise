@@ -65,12 +65,18 @@
                     }
                 },
                 "columns":[
+                    {data: null},
                     {data:'cname'},
                     {data:'category1'},
                     {data:'category2'},
                     {data:'category3'},
                     {data:'campus'},
-                ]
+                ],
+                "columnDefs" : [ {
+                    "targets" : 0,
+                    "data" : null,
+                    "defaultContent" : "<button>Click!</button>"
+                }]
             });
         });
         </script>
@@ -80,6 +86,7 @@
         <table id = "table" style="width:75%">
         <thead>
             <tr>
+                <th>더보기</th>
                 <th>동아리명</th>
                 <th>대분류</th>
                 <th>중분류</th>
@@ -88,28 +95,41 @@
             </tr>
         </thead>
         </table>
-        <button class="openBtn">모달창 open</button>
-        <div class="modal hidden">
-        <div class="bg"></div>
-        <div class="modalBox">
-            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Consectetur quam nobis quis corrupti amet maxime neque, optio, in illo, voluptatibus consequuntur! Rerum quo ea nulla qui, maxime consectetur magni soluta!</p>
-            <button class="closeBtn">✖</button>
-        </div>
-        </div>
+        <!-- 모달을 열기 위한 버튼 -->
+<button type="button" class="btn btn-primary btn-lg" id="openModalBtn">
+모달 보기 버튼
+</button>
+<!-- 모달 영역 -->
+<div id="modalBox" class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal-dialog" role="document">
+<div class="modal-content">
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+<h4 class="modal-title" id="myModalLabel">모달 타이틀</h4>
+</div>
+<div class="modal-body">
+내용
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-primary">확인</button>
+<button type="button" class="btn btn-default" id="closeModalBtn">취소</button>
+</div>
+</div>
+</div>
+</div>
+<script>
+// 모달 버튼에 이벤트를 건다.
+$('#table tbody').on('click', 'button', function(){
+    $('#modalBox').modal('show');
+})
+$('#openModalBtn').on('click', function(){
+$('#modalBox').modal('show');
+});
+// 모달 안의 취소 버튼에 이벤트를 건다.
+$('#closeModalBtn').on('click', function(){
+$('#modalBox').modal('hide');
+});
+</script>
 
-        <script>
-        const open = () => {
-            document.querySelector(".modal").classList.remove("hidden");
-        }
-
-        const close = () => {
-            document.querySelector(".modal").classList.add("hidden");
-        }
-
-        document.querySelector(".openBtn").addEventListener("click", open);
-        document.querySelector(".closeBtn").addEventListener("click", close);
-        document.querySelector(".bg").addEventListener("click", close);
-
-        </script>
-    </body>
+</body>
 </html>
