@@ -51,35 +51,6 @@
         <script src="http://code.jquery.com/jquery-latest.js"></script>
         <link rel="stylesheet" href="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.css"/> 
         <script src="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.js"></script>
-        <script>
-        $(document).ready(function() {
-            $("#table").DataTable({
-                "processing": true,
-                "serverSide": false,
-                "ajax": {
-                    url: '/getOld',
-                    type: 'GET',  
-                    dataSrc: function (receivedData) {
-                        console.log(receivedData)
-                        return receivedData
-                    }
-                },
-                "columns":[
-                    {data: null},
-                    {data:'cname'},
-                    {data:'category1'},
-                    {data:'category2'},
-                    {data:'category3'},
-                    {data:'campus'},
-                ],
-                "columnDefs" : [ {
-                    "targets" : 0,
-                    "data" : null,
-                    "defaultContent" : "<button>Click!</button>"
-                }]
-            });
-        });
-        </script>
     </head>
     <body>
         <h1> 동아리 목록 </h1>
@@ -102,26 +73,84 @@
 <!-- 모달 영역 -->
 <div id="modalBox" class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 <div class="modal-dialog" role="document">
-<div class="modal-content">
-<div class="modal-header">
-<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-<h4 class="modal-title" id="myModalLabel">모달 타이틀</h4>
-</div>
-<div class="modal-body">
-내용
-</div>
-<div class="modal-footer">
-<button type="button" class="btn btn-primary">확인</button>
-<button type="button" class="btn btn-default" id="closeModalBtn">취소</button>
-</div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title" id="myModalLabel">상세보기</h4>
+        </div>
+    <div class="modal-body">
+    <table id = "table" style="width:75%">
+        <thead>
+            <tr>
+                <th>동아리명</th>
+                <th>대분류</th>
+                <th>중분류</th>
+                <th>소분류</th>
+                <th>캠퍼스</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td id="name"></td>
+                <td id="cate1"></td>
+                <td id="cate2"></td>
+                <td id="cate3"></td>
+                <td id="campus"></td>
+            </tr>
+        </tbody>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary">확인</button>
+        <button type="button" class="btn btn-default" id="closeModalBtn">취소</button>
+    </div>
 </div>
 </div>
 </div>
 <script>
+$(document).ready(function() {
+                var myDataTable = $("#table").DataTable({
+                "processing": true,
+                "serverSide": false,
+                "ajax": {
+                    url: '/getOld',
+                    type: 'GET',  
+                    dataSrc: function (receivedData) {
+                        console.log(receivedData)
+                        return receivedData
+                    }
+                },
+                "columns":[
+                    {data: null},
+                    {data:'cname'},
+                    {data:'category1'},
+                    {data:'category2'},
+                    {data:'category3'},
+                    {data:'campus'},
+                ],
+                "columnDefs" : [ {
+                    "targets" : 0,
+                    "data" : null,
+                    "defaultContent" : "<button style = 'width:100%'>Click!</button>"
+                }]
+            });
+            $('#table').on('click', 'td button', function () {
+                var data = myDataTable.row( $(this).parents('tr') ).data();
+                document.getElementById('name').innerHTML=data['cname'];
+                document.getElementById('cate1').innerHTML=data['category1'];
+                document.getElementById('cate2').innerHTML=data['category2'];
+                document.getElementById('cate3').innerHTML=data['category3'];
+                document.getElementById('campus').innerHTML=data['campus'];
+                $('#modalBox').modal('show');
+            // var data = myDataTable.row( $(this).parents('tr') ).data();
+            // alert(data['cname']);
+            } );
+                        // 모달 안의 취소 버튼에 이벤트를 건다.
+            $('#closeModalBtn').on('click', function(){
+            $('#modalBox').modal('hide');
+            });
+        });
 // 모달 버튼에 이벤트를 건다.
-$('#table tbody').on('click', 'button', function(){
-    $('#modalBox').modal('show');
-})
 $('#openModalBtn').on('click', function(){
 $('#modalBox').modal('show');
 });
