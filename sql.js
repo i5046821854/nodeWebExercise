@@ -105,7 +105,7 @@ app.get('/another', (req, res) => {
 })
 
 app.get('/getOld', (req, res) => {
-    let sql = "select * from CLUB_OLD"
+    let sql = "SELECT a.* ,b.share ,b.upt FROM CLUB_OLD AS a INNER JOIN SHARE AS b ON a.cid = b.cid"
     db.query(sql, async(err, data) => {
         if (err)
             throw err;

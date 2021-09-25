@@ -126,6 +126,8 @@
 </div>
 <script>
 var datarReceived = {};
+var share = ""
+var upt = ""
 $(document).ready(function() {
                 var myDataTable = $("#table").DataTable({
                 "processing": true,
@@ -134,8 +136,8 @@ $(document).ready(function() {
                     url: '/getOld',
                     type: 'GET',  
                     dataSrc: function (receivedData) {
-                        console.log(receivedData)
                         datarReceived = receivedData
+                        console.log(datarReceived)
                         return receivedData
                     }
                 },
@@ -157,13 +159,33 @@ $(document).ready(function() {
                 {
                     "targets" : 1,
                     "data" : null,
-                    "defaultContent" : "<span> 공개중 </span> <br><span> 수정가능 </span>"
+                    "render" : function(data, type, row){
+                        if(row.share == 0)
+                            share = "<div>비공개</div>"
+                        else if(row.share == 1)
+                            share = "<div>공개</div>"
+                        if(row.upt == 0)
+                            upt = "<div>수정불가</div>"
+                        else if(row.upt == 1)
+                            upt = "<div>수정가능</div>"
+                        return share+upt
+                    }
                 },
                 {
                     "targets" : 7,
                     "data" : null,
                     'visible' : false,
-                    "defaultContent" : "<input type='checkbox' name='update' value='update'> 수정<br><input type='checkbox' name='share' value='share'> 공개"
+                    "render" : function(data, type, row){
+                        if(row.share == 0)
+                            share = "<div><input type='checkbox' id = 'share' name='share' value=" + row.cid+ "> 공개</div>"
+                        else if(row.share == 1)
+                            share = "<div><input type='checkbox' id = 'share' name='share' value=" + row.cid+ " checked> 공개</div>"
+                        if(row.upt == 0)
+                            upt = "<div><input type='checkbox' id = 'update' name='update' value=" + row.cid+ "> 수정</div>"
+                        else if(row.upt == 1)
+                            upt = "<div><input type='checkbox' id = 'update' name='update' value=" + row.cid+ " checked> 수정</div>"
+                        return share+upt
+                    }
                 }
                 ],
                 "initComplete": function () {
@@ -211,6 +233,18 @@ $(document).ready(function() {
                 myDataTable.columns( [7] ).visible( true );
             }
             else{
+                var checkbox = $('input:checkbox[name="update"]:checked');
+                var rowData = []
+                checkbox.each(function(i){
+                    /* var tr = checkbox.parent().parent().eq(i);
+                    var td = tr.children()
+                    rowData.push(tr.text()) */
+                    rowData.push($(this).val())
+                    $.ajax({
+                        url:'/updateState'
+                        
+                    })
+                })
                 myDataTable.columns( [1] ).visible( true );
                 myDataTable.columns( [7] ).visible( false );
             }
