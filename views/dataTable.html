@@ -48,6 +48,10 @@
           margin: 0 auto;
         }
 
+        .manage{
+            float: right
+        }
+
         .hidden {
           display: none;
         }
@@ -58,7 +62,7 @@
     </head>
     <body>
         <h1 > 동아리 목록 </h1>
-        <label><input type="checkbox" id="manage" name="manage" value="manage"> 관리모드</label>
+        <label style="float:right"><input type="checkbox" id="manage" name="manage" value="manage"> 관리모드</label>
         <table id = "table" style="width:100%">
         <thead>
             <tr>
@@ -84,10 +88,7 @@
             </tr>
         </tfoot>
         </table>
-        <!-- 모달을 열기 위한 버튼 -->
-<button type="button" class="btn btn-primary btn-lg" id="openModalBtn">
-모달 보기 버튼
-</button>
+
 <!-- 모달 영역 -->
 <div id="modalBox" class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 <div class="modal-dialog" role="document">
@@ -233,20 +234,38 @@ $(document).ready(function() {
                 myDataTable.columns( [7] ).visible( true );
             }
             else{
-                var checkbox = $('input:checkbox[name="update"]:checked');
-                var rowData = []
-                checkbox.each(function(i){
+                var checkbox1 = $('input:checkbox[name="update"]:checked');
+                var checkbox2= $('input:checkbox[name="share"]:checked');
+                var checkbox3 = $('input:checkbox[name="update"]:not(:checked)');
+                var checkbox4= $('input:checkbox[name="share"]:not(:checked)');
+                var updatedData = []
+                var sharedData = []
+                var unupdatedData = []
+                var unsharedData = []
+                checkbox1.each(function(i){
                     /* var tr = checkbox.parent().parent().eq(i);
                     var td = tr.children()
                     rowData.push(tr.text()) */
-                    rowData.push($(this).val())
-                    $.ajax({
-                        url:'/updateState'
-                        
-                    })
+                    updatedData.push($(this).val())
                 })
+                checkbox2.each(function(){
+                    sharedData.push($(this).val())
+                })
+                checkbox3.each(function(){
+                    unupdatedData.push($(this).val())
+                })
+                checkbox4.each(function(){
+                    unsharedData.push($(this).val())
+                })
+                $.ajax({
+                        url:'/updated',
+                        datatype: "json",
+                        type: "POST",
+                        data: {updatedData: updatedData, sharedData : sharedData, unupdatedData:unupdatedData, unsharedData:unsharedData }
+                    })
                 myDataTable.columns( [1] ).visible( true );
                 myDataTable.columns( [7] ).visible( false );
+                $('#table').DataTable().ajax.reload();
             }
         })
         });

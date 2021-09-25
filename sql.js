@@ -130,6 +130,50 @@ app.post('/update', upload.single("logo"), async(req, res) => {
     })
 })
 
+app.post('/updated', (req, res) => {
+    console.log(req.body)
+    if (req.body.updatedData !== undefined) {
+        req.body.updatedData.forEach((e) => {
+            let sql =
+                `UPDATE SHARE SET upt = 1 WHERE CID = "${Number(e)}"`
+            db.query(sql, async(err, result) => {
+                if (err)
+                    throw err;
+            })
+        })
+    }
+    if (req.body.sharedData !== undefined) {
+        req.body.sharedData.forEach((e) => {
+            let sql =
+                `UPDATE SHARE SET share = 1 WHERE CID = "${Number(e)}"`
+            db.query(sql, async(err, result) => {
+                if (err)
+                    throw err;
+            })
+        })
+    }
+    if (req.body.unupdatedData !== undefined) {
+        req.body.unupdatedData.forEach((e) => {
+            let sql =
+                `UPDATE SHARE SET upt = 0 WHERE CID = "${Number(e)}"`
+            db.query(sql, async(err, result) => {
+                if (err)
+                    throw err;
+            })
+        })
+    }
+    if (req.body.unsharedData !== undefined) {
+        req.body.unsharedData.forEach((e) => {
+            let sql =
+                `UPDATE SHARE SET share = 0 WHERE CID = "${Number(e)}"`
+            db.query(sql, async(err, result) => {
+                if (err)
+                    throw err;
+            })
+        })
+    }
+})
+
 app.get('/delete', async(req, res) => {
     id = req.query.id
     let sql =
