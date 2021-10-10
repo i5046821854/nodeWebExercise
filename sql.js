@@ -1,17 +1,29 @@
-const mysql = require('mysql')
+const mysql = require('mysql2')
 const express = require('express')
 const app = express()
-
+const bcrypt = require('bcrypt');
 const fs = require('fs')
 const multer = require('multer')
 const multerS3 = require('multer-s3');
-
+const cookieParser = require('cookie-parser')
+const url = require('url');
+const session = require('express-session')
+const MySQLStore = require('express-mysql-session')(session);
 const { uploadFile, getFileStream, deleteFile } = require('./s3.js')
 const data = fs.readFileSync('./database.json')
 const conf = JSON.parse(data)
 
-const bodyparser = require('body-parser')
+// const bodyparser = require('body-parser')
+// app.use(bodyparser.json())
+// app.use(bodyparser.urlencoded({ extended: false }))
 
+const isAuthenticated = (req, res, next) => {
+    if (req.isAuthenticated()) {
+        next();
+    } else {
+        res.status()
+    }
+}
 app.set("view engine", "ejs");
 
 // "ejs"로 변경 후 "html" 파일로 열 수 있게 렌더링
@@ -19,8 +31,10 @@ app.engine("html", require("ejs").renderFile);
 
 const PORT = 3000 || process.env.PORT
 
-app.use(bodyparser.json())
-app.use(bodyparser.urlencoded({ extended: true }))
+
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json())
 
 app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
@@ -28,6 +42,8 @@ app.engine('html', require('ejs').renderFile);
 const aws = require('aws-sdk');
 const { CloudFront } = require('aws-sdk')
 const s3 = new aws.S3()
+
+
 
 const upload = multer({
     dest: "logo"
@@ -41,11 +57,22 @@ const db = mysql.createConnection({
     database: conf.database
 })
 
+
 db.connect((err) => {
     if (err)
         throw err;
     console.log("connected")
 })
+
+//var sessionStore = new MySQLStore(db);
+
+app.use(
+    session({
+        secret: 'keyboard cat',
+        resave: false,
+        saveUninitialized: true,
+    })
+)
 
 app.get('', (req, res) => {
     let sql = "SELECT * FROM CLUBLIST"
@@ -71,6 +98,83 @@ async function copy() {
 
 app.get('/create', upload.single('logo'), (req, res) => {
     res.render('create.html')
+})
+
+app.get('/login', (req, res) => {
+    res.render('login.html');
+})
+
+const login = async function(id, pw) {
+    let result2 = "";
+    let sql =
+        `select * from CLUB_OLD where admin_id = "${id}"`
+    const result = await db.promise().query(sql)
+    const textRow = JSON.parse(JSON.stringify(result[0]))
+    if (!textRow[0]) {
+        result2 = "No id"
+    } else {
+        const isMatch = await bcrypt.compare(pw, textRow[0].admin_pw);
+        if (isMatch)
+            result2 = textRow[0];
+        else
+            result2 = "invalid password"
+    }
+    return new Promise((resolve, reject) => {
+        resolve(result2)
+    })
+}
+
+app.post('/login', async(req, res) => {
+    var id = req.body.id;
+    var pw = req.body.pwd;
+    const result = await login(id, pw);
+    if (result.cid) {
+        req.session.user = result
+        res.cookie('cnt', 0)
+        if (result.authority > 3) {
+            console.log("asd")
+            console.log(req.session.user)
+            res.redirect("/getOne")
+                // res.redirect(url.format({
+                //     pathname: "/getOne",
+                //     query: result
+                // }))
+        } else {
+            console.log("asd")
+            res.redirect(url.format({
+                pathname: "/getOne",
+                query: result
+            }))
+        }
+        //res.redirect('/getAll')
+    } else {
+        if (!req.cookies.cnt) {
+            res.cookie('cnt', 1);
+        } else {
+            res.cookie('cnt', Number(req.cookies.cnt) + 1)
+        }
+        console.log(req.cookies.cnt)
+        res.send(`<script> alert("다시 입력"); window.location.href='/login'; </script>`)
+    }
+})
+
+app.get('/getOne', (req, res) => {
+    console.log()
+    res.render('data.html', {
+        data: JSON.parse(JSON.stringify(req.session.user))
+    })
+})
+
+app.get('/updateData', (req, res) => {
+    console.log(req.query)
+    res.render('data2.html', {
+        data: JSON.parse(JSON.stringify(req.query))
+    })
+})
+
+
+app.get('/getAll', (req, res) => {
+    res.render('dataTable.html')
 })
 
 app.post('/add', upload.single("logo"), async(req, res) => {
@@ -113,9 +217,6 @@ app.get('/getOld', (req, res) => {
     })
 })
 
-app.get('/getanother', (req, res) => {
-    res.render('dataTable.html')
-})
 
 app.post('/update', upload.single("logo"), async(req, res) => {
     id = Number(req.body.id)
