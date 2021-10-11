@@ -139,6 +139,11 @@ app.get('/login', (req, res) => {
     res.render('login.ejs');
 })
 
+app.get('/logout', (req, res) => {
+    req.session.user = undefined;
+    res.send("<script>alert(`로그아웃되었습니다.\n다시 로그인 해주세요`);window.location.href='/login';</script>")
+})
+
 const login = async function(id, pw) {
     let result2 = "";
     let sql =

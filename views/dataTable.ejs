@@ -1,283 +1,304 @@
 <!DOCTYPE html>
 <html lang='en'>
-    <head>
-        <meta charset="UTF-8"/>
-        <title>LEE</title>
-        <style>
-            body {
-                margin-left: 20px;
-                margin-right: 20px;
-            }
-            table, th, td { border: 1px solid black; border-collapse: collapse }
-            .hidden-col {display: none}
-                   button {
-          background-color: #F9B514;
-          padding: 5px 10px;
-          border-radius: 4px;
-          cursor: pointer;
-        }
 
+<head>
+    <meta charset="UTF-8" />
+    <title>LEE</title>
+    <style>
+        body {
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+        
+        table,
+        th,
+        td {
+            border: 1px solid black;
+            border-collapse: collapse
+        }
+        
+        .hidden-col {
+            display: none
+        }
+        
+        button {
+            background-color: #F9B514;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
         .modal {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-
+        
         .modal .bg {
-          width: 100%;
-          height: 100%;
-          background-color: rgba(0, 0, 0, 0.6);
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
         }
-
+        
         .modalBox {
-          position: absolute;
-          background-color: #fff;
-          width: 400px;
-          height: 200px;
-          padding: 15px;
+            position: absolute;
+            background-color: #fff;
+            width: 400px;
+            height: 200px;
+            padding: 15px;
         }
-
+        
         .modalBox button {
-          display: block;
-          width: 80px;
-          margin: 0 auto;
+            display: block;
+            width: 80px;
+            margin: 0 auto;
         }
-
-        .manage{
+        
+        .manage {
             float: right
         }
-
+        
         .hidden {
-          display: none;
+            display: none;
         }
-        </style>
-        <script src="http://code.jquery.com/jquery-latest.js"></script>
-        <link rel="stylesheet" href="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.css"/> 
-        <script src="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.js"></script>
-    </head>
-    <body>
-        <h1 > 동아리 목록 </h1>
+    </style>
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.css" />
+    <script src="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.js"></script>
+</head>
+
+<body>
+    <%- include('./partials/header') %>
+        <h1> 동아리 목록 </h1>
         <label style="float:right"><input type="checkbox" id="manage" name="manage" value="manage"> 관리모드</label>
-        <table id = "table" style="width:100%">
-        <thead>
-            <tr>
-                <th>더보기</th>
-                <th>상태</th>
-                <th>동아리명</th>
-                <th>대분류</th>
-                <th>중분류</th>
-                <th>소분류</th>
-                <th>캠퍼스</th>
-                <th>관리</th>
-            </tr>
-        </thead>
-        <tfoot>
-            <tr>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th>대분류</th>
-                <th>중분류</th>
-                <th>소분류</th>
-                <th>캠퍼스</th>
-            </tr>
-        </tfoot>
+        <table id="table" style="width:100%">
+            <thead>
+                <tr>
+                    <th>더보기</th>
+                    <th>상태</th>
+                    <th>동아리명</th>
+                    <th>대분류</th>
+                    <th>중분류</th>
+                    <th>소분류</th>
+                    <th>캠퍼스</th>
+                    <th>관리</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th>대분류</th>
+                    <th>중분류</th>
+                    <th>소분류</th>
+                    <th>캠퍼스</th>
+                </tr>
+            </tfoot>
         </table>
 
-<!-- 모달 영역 -->
-<div id="modalBox" class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-<div class="modal-dialog" role="document">
-    <div class="modal-content">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-            <h4 class="modal-title" id="myModalLabel">상세보기</h4>
+        <!-- 모달 영역 -->
+        <div id="modalBox" class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        <h4 class="modal-title" id="myModalLabel">상세보기</h4>
+                    </div>
+                    <div class="modal-body">
+                        <table id="table" style="width:75%">
+                            <thead>
+                                <tr>
+                                    <th>동아리명</th>
+                                    <th>대분류</th>
+                                    <th>중분류</th>
+                                    <th>소분류</th>
+                                    <th>캠퍼스</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td id="name"></td>
+                                    <td id="cate1"></td>
+                                    <td id="cate2"></td>
+                                    <td id="cate3"></td>
+                                    <td id="campus"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" id="closeModalBtn">취소</button>
+                    </div>
+                </div>
+            </div>
         </div>
-    <div class="modal-body">
-    <table id = "table" style="width:75%">
-        <thead>
-            <tr>
-                <th>동아리명</th>
-                <th>대분류</th>
-                <th>중분류</th>
-                <th>소분류</th>
-                <th>캠퍼스</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td id="name"></td>
-                <td id="cate1"></td>
-                <td id="cate2"></td>
-                <td id="cate3"></td>
-                <td id="campus"></td>
-            </tr>
-        </tbody>
-        </table>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-default" id="closeModalBtn">취소</button>
-    </div>
-</div>
-</div>
-</div>
-<script>
-var datarReceived = {};
-var share = ""
-var upt = ""
-$(document).ready(function() {
+        <script>
+            var datarReceived = {};
+            var share = ""
+            var upt = ""
+            $(document).ready(function() {
                 var myDataTable = $("#table").DataTable({
-                "processing": true,
-                "serverSide": false,
-                "ajax": {
-                    url: '/getOld',
-                    type: 'GET',  
-                    dataSrc: function (receivedData) {
-                        datarReceived = receivedData
-                        console.log(datarReceived)
-                        return receivedData
-                    }
-                },
-                "columns":[
-                    {data: null},
-                    {data: null},
-                    {data:'cname'},
-                    {data:'category1'},
-                    {data:'category2'},
-                    {data:'category3'},
-                    {data:'campus'},
-                    {data: null}
-                ],
-                "columnDefs" : [ {
-                    "targets" : 0,
-                    "data" : null,
-                    "defaultContent" : "<button style = 'width:100%'>Click!</button>"
-                },
-                {
-                    "targets" : 1,
-                    "data" : null,
-                    "render" : function(data, type, row){
-                        if(row.share == 0)
-                            share = "<div>비공개</div>"
-                        else if(row.share == 1)
-                            share = "<div>공개</div>"
-                        if(row.upt == 0)
-                            upt = "<div>수정불가</div>"
-                        else if(row.upt == 1)
-                            upt = "<div>수정가능</div>"
-                        return share+upt
-                    }
-                },
-                {
-                    "targets" : 7,
-                    "data" : null,
-                    'visible' : false,
-                    "render" : function(data, type, row){
-                        if(row.share == 0)
-                            share = "<div><input type='checkbox' id = 'share' name='share' value=" + row.cid+ "> 공개</div>"
-                        else if(row.share == 1)
-                            share = "<div><input type='checkbox' id = 'share' name='share' value=" + row.cid+ " checked> 공개</div>"
-                        if(row.upt == 0)
-                            upt = "<div><input type='checkbox' id = 'update' name='update' value=" + row.cid+ "> 수정</div>"
-                        else if(row.upt == 1)
-                            upt = "<div><input type='checkbox' id = 'update' name='update' value=" + row.cid+ " checked> 수정</div>"
-                        return share+upt
-                    }
-                }
-                ],
-                "initComplete": function () {
-                myDataTable.columns().every( function () {
-                    var column = this;
-                    if(column.selector.cols >= 3 && column.selector.cols <= 6 )
-                    {
-                        var select = $('<select><option value=""></option></select>')
-                            .appendTo( $(column.footer()).empty() )
-                            .on( 'change', function () {
-                                var val = $.fn.dataTable.util.escapeRegex(
-                                    $(this).val()
-                                );
-        
-                                column
-                                    .search( val ? '^'+val+'$' : '', true, false )
-                                    .draw();
-                            } );
-        
-                        column.data().unique().sort().each( function ( d, j ) {
-                            select.append( '<option value="'+d+'">'+d+'</option>' )
+                    "processing": true,
+                    "serverSide": false,
+                    "ajax": {
+                        url: '/getOld',
+                        type: 'GET',
+                        dataSrc: function(receivedData) {
+                            datarReceived = receivedData
+                            console.log(datarReceived)
+                            return receivedData
+                        }
+                    },
+                    "columns": [{
+                        data: null
+                    }, {
+                        data: null
+                    }, {
+                        data: 'cname'
+                    }, {
+                        data: 'category1'
+                    }, {
+                        data: 'category2'
+                    }, {
+                        data: 'category3'
+                    }, {
+                        data: 'campus'
+                    }, {
+                        data: null
+                    }],
+                    "columnDefs": [{
+                        "targets": 0,
+                        "data": null,
+                        "defaultContent": "<button style = 'width:100%'>Click!</button>"
+                    }, {
+                        "targets": 1,
+                        "data": null,
+                        "render": function(data, type, row) {
+                            if (row.share == 0)
+                                share = "<div>비공개</div>"
+                            else if (row.share == 1)
+                                share = "<div>공개</div>"
+                            if (row.upt == 0)
+                                upt = "<div>수정불가</div>"
+                            else if (row.upt == 1)
+                                upt = "<div>수정가능</div>"
+                            return share + upt
+                        }
+                    }, {
+                        "targets": 7,
+                        "data": null,
+                        'visible': false,
+                        "render": function(data, type, row) {
+                            if (row.share == 0)
+                                share = "<div><input type='checkbox' id = 'share' name='share' value=" + row.cid + "> 공개</div>"
+                            else if (row.share == 1)
+                                share = "<div><input type='checkbox' id = 'share' name='share' value=" + row.cid + " checked> 공개</div>"
+                            if (row.upt == 0)
+                                upt = "<div><input type='checkbox' id = 'update' name='update' value=" + row.cid + "> 수정</div>"
+                            else if (row.upt == 1)
+                                upt = "<div><input type='checkbox' id = 'update' name='update' value=" + row.cid + " checked> 수정</div>"
+                            return share + upt
+                        }
+                    }],
+                    "initComplete": function() {
+                        myDataTable.columns().every(function() {
+                            var column = this;
+                            if (column.selector.cols >= 3 && column.selector.cols <= 6) {
+                                var select = $('<select><option value=""></option></select>')
+                                    .appendTo($(column.footer()).empty())
+                                    .on('change', function() {
+                                        var val = $.fn.dataTable.util.escapeRegex(
+                                            $(this).val()
+                                        );
+
+                                        column
+                                            .search(val ? '^' + val + '$' : '', true, false)
+                                            .draw();
+                                    });
+
+                                column.data().unique().sort().each(function(d, j) {
+                                    select.append('<option value="' + d + '">' + d + '</option>')
+                                });
+                            }
                         });
                     }
-                } );
-                }
+                });
+
+                $('#table').on('click', 'td button', function() {
+                    var data = myDataTable.row($(this).parents('tr')).data();
+                    document.getElementById('name').innerHTML = data['cname'];
+                    document.getElementById('cate1').innerHTML = data['category1'];
+                    document.getElementById('cate2').innerHTML = data['category2'];
+                    document.getElementById('cate3').innerHTML = data['category3'];
+                    document.getElementById('campus').innerHTML = data['campus'];
+                    $('#modalBox').modal('show');
+
+                });
+                // 모달 안의 취소 버튼에 이벤트를 건다.
+                $('#closeModalBtn').on('click', function() {
+                    $('#modalBox').modal('hide');
+                });
+                $('#manage').on('click', function() {
+                    if ($("#manage").is(":checked")) {
+                        myDataTable.columns([1]).visible(false);
+                        myDataTable.columns([7]).visible(true);
+                    } else {
+                        var checkbox1 = $('input:checkbox[name="update"]:checked');
+                        var checkbox2 = $('input:checkbox[name="share"]:checked');
+                        var checkbox3 = $('input:checkbox[name="update"]:not(:checked)');
+                        var checkbox4 = $('input:checkbox[name="share"]:not(:checked)');
+                        var updatedData = []
+                        var sharedData = []
+                        var unupdatedData = []
+                        var unsharedData = []
+                        checkbox1.each(function(i) {
+                            /* var tr = checkbox.parent().parent().eq(i);
+                            var td = tr.children()
+                            rowData.push(tr.text()) */
+                            updatedData.push($(this).val())
+                        })
+                        checkbox2.each(function() {
+                            sharedData.push($(this).val())
+                        })
+                        checkbox3.each(function() {
+                            unupdatedData.push($(this).val())
+                        })
+                        checkbox4.each(function() {
+                            unsharedData.push($(this).val())
+                        })
+                        $.ajax({
+                            url: '/updated',
+                            datatype: "json",
+                            type: "POST",
+                            data: {
+                                updatedData: updatedData,
+                                sharedData: sharedData,
+                                unupdatedData: unupdatedData,
+                                unsharedData: unsharedData
+                            }
+                        })
+                        myDataTable.columns([1]).visible(true);
+                        myDataTable.columns([7]).visible(false);
+                        $('#table').DataTable().ajax.reload();
+                    }
+                })
             });
-
-            $('#table').on('click', 'td button', function () {
-                var data = myDataTable.row( $(this).parents('tr') ).data();
-                document.getElementById('name').innerHTML=data['cname'];
-                document.getElementById('cate1').innerHTML=data['category1'];
-                document.getElementById('cate2').innerHTML=data['category2'];
-                document.getElementById('cate3').innerHTML=data['category3'];
-                document.getElementById('campus').innerHTML=data['campus'];
+            // 모달 버튼에 이벤트를 건다.
+            $('#openModalBtn').on('click', function() {
                 $('#modalBox').modal('show');
-
-            } );
+            });
             // 모달 안의 취소 버튼에 이벤트를 건다.
-            $('#closeModalBtn').on('click', function(){
+            $('#closeModalBtn').on('click', function() {
                 $('#modalBox').modal('hide');
             });
-            $('#manage').on('click', function(){
-            if($("#manage").is(":checked")){
-                myDataTable.columns( [1] ).visible( false );
-                myDataTable.columns( [7] ).visible( true );
-            }
-            else{
-                var checkbox1 = $('input:checkbox[name="update"]:checked');
-                var checkbox2= $('input:checkbox[name="share"]:checked');
-                var checkbox3 = $('input:checkbox[name="update"]:not(:checked)');
-                var checkbox4= $('input:checkbox[name="share"]:not(:checked)');
-                var updatedData = []
-                var sharedData = []
-                var unupdatedData = []
-                var unsharedData = []
-                checkbox1.each(function(i){
-                    /* var tr = checkbox.parent().parent().eq(i);
-                    var td = tr.children()
-                    rowData.push(tr.text()) */
-                    updatedData.push($(this).val())
-                })
-                checkbox2.each(function(){
-                    sharedData.push($(this).val())
-                })
-                checkbox3.each(function(){
-                    unupdatedData.push($(this).val())
-                })
-                checkbox4.each(function(){
-                    unsharedData.push($(this).val())
-                })
-                $.ajax({
-                        url:'/updated',
-                        datatype: "json",
-                        type: "POST",
-                        data: {updatedData: updatedData, sharedData : sharedData, unupdatedData:unupdatedData, unsharedData:unsharedData }
-                    })
-                myDataTable.columns( [1] ).visible( true );
-                myDataTable.columns( [7] ).visible( false );
-                $('#table').DataTable().ajax.reload();
-            }
-        })
-        });
-// 모달 버튼에 이벤트를 건다.
-$('#openModalBtn').on('click', function(){
-$('#modalBox').modal('show');
-});
-// 모달 안의 취소 버튼에 이벤트를 건다.
-$('#closeModalBtn').on('click', function(){
-$('#modalBox').modal('hide');
-});
-</script>
+        </script>
 
 </body>
+
 </html>
