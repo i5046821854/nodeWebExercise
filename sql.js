@@ -61,6 +61,13 @@ const db = mysql.createConnection({
 })
 
 
+const auth = function(req, res, next) {
+    if (!req.session.user)
+        res.send("<script>alert('로그인 후 이용가능합니다');window.location.href='/login';</script>")
+    else
+        next();
+}
+
 db.connect((err) => {
     if (err)
         throw err;
@@ -89,7 +96,7 @@ app.get('', (req, res) => {
     })
 })
 
-app.get('/changePWD', (req, res) => {
+app.get('/changePWD', auth, (req, res) => {
     res.render('changePWD.ejs', {
         pwd: req.session.user.admin_pw
     });
@@ -109,7 +116,8 @@ app.post('/changePWD', (req, res) => {
             db.query(sql, async(err, result) => {
                 if (err)
                     console.log(err);
-                res.send("<script>alert('성공적으로 변경되었습니다');window.location.href='/login';</script>")
+                req.session.user = undefined
+                res.send("<script>alert(`성공적으로 변경되었습니다.\n다시 로그인 해주세요`);window.location.href='/login';</script>")
             })
         })
     })
@@ -182,7 +190,7 @@ app.post('/login', async(req, res) => {
     }
 })
 
-app.get('/getOne', (req, res) => {
+app.get('/getOne', auth, (req, res) => {
     let sql = `select * from CLUB_OLD WHERE cid = ${req.session.user.cid}`
     db.query(sql, async(err, result) => {
         if (err)
@@ -194,7 +202,7 @@ app.get('/getOne', (req, res) => {
     })
 })
 
-app.get('/updateData', (req, res) => {
+app.get('/updateData', auth, (req, res) => {
     res.render('data2.ejs', {
             data: JSON.parse(JSON.stringify(req.session.user))
         })
@@ -221,7 +229,7 @@ app.post('/updateData', (req, res) => {
 })
 
 
-app.get('/getAll', (req, res) => {
+app.get('/getAll', auth, (req, res) => {
     res.render('dataTable.ejs')
 })
 
