@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table,
+        th,
+        td {
+            border: 2px solid darkgray;
+            border-collapse: collapse
+        }
+        
+        tr {
+            height: "30";
+        }
+        
+        table {
+            width: 100%;
+            text-align: center;
+        }
+        
+        button {
+            display: block;
+            margin: auto;
+            width: 30%;
+            margin-top: 25px;
+            background-color: lightcyan;
+            font-size: larger;
+        }
+        
+        .category {
+            background-color: lightcyan;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('header') %>
+        <table>
+            <colgroup>
+                <col width: 40%>
+                <col width: 60%>
+            </colgroup>
+            <tbody>
+                <tr class="category">
+                    <td colspan="2">기본 정보</td>
+                </tr>
+                <tr>
+                    <td>동아리명</td>
+                    <td>
+                        <%= data.cname %>
+                    </td>
+                </tr>
+                <tr>
+                    <td>대분류</td>
+                    <td>
+                        <%= data.category1 %>
+                    </td>
+                </tr>
+                <tr>
+                    <td>중분류</td>
+                    <td>
+                        <%= data.category2 %>
+                    </td>
+                </tr>
+                <tr>
+                    <td>소분류</td>
+                    <td>
+                        <%= data.category3 %>
+                    </td>
+                </tr>
+                <tr>
+                    <td>캠퍼스</td>
+                    <td>
+                        <%= data.campus %>
+                    </td>
+                </tr>
+                <tr>
+                    <td>설립연도</td>
+                    <td>
+                        <%= data.estab_year %>
+                    </td>
+                </tr>
+                <tr class="category">
+                    <td colspan="2">모임 소개</td>
+                </tr>
+                <tr>
+                    <td>소개글</td>
+                    <td>
+                        <%= data.intro_text %>
+                    </td>
+                </tr>
+                <tr>
+                    <td>핵심 소개문구</td>
+                    <td>
+                        <%= data.intro_sentence %>
+                    </td>
+                </tr>
+                <tr>
+                    <td>활동내용</td>
+                    <td>
+                        <%= data.activity_info %>
+                    </td>
+                </tr>
+                <tr>
+                    <td>모임시간</td>
+                    <td>
+                        <%= data.meeting_time %>
+                    </td>
+                </tr>
+                <tr>
+                    <td>모임장소</td>
+                    <td>
+                        <%= data.activity_location %>
+                    </td>
+                </tr>
+                <tr>
+                    <td>활동인원</td>
+                    <td>
+                        <%= data.activity_num %>
+                    </td>
+                </tr>
+                <tr class="category">
+                    <td colspan="2">리쿠르팅</td>
+                </tr>
+                <tr>
+                    <td>모집시기</td>
+                    <td>
+                        <%= data.recruit_season %>
+                    </td>
+                </tr>
+                <tr>
+                    <td>의무활동기간</td>
+                    <td>
+                        <%= data.activity_period %>
+                    </td>
+                </tr>
+                <tr>
+                    <td>모집방식</td>
+                    <td>
+                        <%= data.recruit_process %>
+                    </td>
+                </tr>
+                <tr>
+                    <td>모집인원</td>
+                    <td>
+                        <%= data.recruit_num %>
+                    </td>
+                </tr>
+                <tr>
+                    <td>리쿠르팅 사이트</td>
+                    <td>
+                        <%= data.recruit_site %>
+                    </td>
+                </tr>
+                <tr class="category">
+                    <td colspan="2">연락처/사이트</td>
+                </tr>
+                <tr>
+                    <td>대표자 이름</td>
+                    <td>
+                        <%= data.president_name %>
+                    </td>
+                </tr>
+                <tr>
+                    <td>대표자 연락처</td>
+                    <td>
+                        <%= data.president_contact %>
+                    </td>
+                </tr>
+                <tr>
+                    <td>긴급연락처</td>
+                    <td>
+                        <%= data.emergency_contact %>
+                    </td>
+                </tr>
+                <tr>
+                    <td>동아리 웹페이지1</td>
+                    <td>
+                        <%= data.website_link %>
+                    </td>
+                </tr>
+                <tr>
+                    <td>동아리 웹페이지2</td>
+                    <td>
+                        <%= data.website_link2 %>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="location.href = '/updateData'">수정하기</button>
+</body>
+
+</html>

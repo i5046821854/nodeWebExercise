@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table,
+        th,
+        td {
+            border: 2px solid darkgray;
+            border-collapse: collapse
+        }
+        
+        tr {
+            height: "30";
+        }
+        
+        table {
+            width: 100%;
+            text-align: center;
+        }
+        
+        #button,
+        button {
+            margin: auto;
+            width: 30%;
+            margin-top: 25px;
+            background-color: lightcyan;
+            font-size: larger;
+        }
+        
+        .category {
+            background-color: lightcyan;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('header') %>
+        <form method="POST" action="/updateData">
+            <table>
+                <colgroup>
+                    <col width: 40%>
+                    <col width: 60%>
+                </colgroup>
+                <tbody>
+                    <tr class="category">
+                        <td colspan="2">기본 정보</td>
+                    </tr>
+                    <tr style="display:none">
+                        <td>cid</td>
+                        <td>
+                            <input type='text' name="cid" value=<%=data.cid %> readonly >
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>동아리명</td>
+                        <td>
+                            <input type='text' name="cname" value=<%=data.cname %> readonly >
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>대분류</td>
+                        <td>
+                            <input type='text' name="category1" value=<%=data.category1 %> readonly>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>중분류</td>
+                        <td>
+                            <input type='text' name="category2" readonly value=<%=data.category2 %> >
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>소분류</td>
+                        <td>
+                            <input type='text' name="category3" value=<%=data.category3 %>>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>캠퍼스</td>
+                        <td>
+                            <input type='text' name="campus" value=<%=data.campus %>>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>설립연도</td>
+                        <td>
+                            <input type='text' name="estab_year" value=<%=data.estab_year %>>
+                        </td>
+                    </tr>
+                    <tr class="category">
+                        <td colspan="2">모임 소개</td>
+                    </tr>
+                    <tr>
+                        <td>소개글</td>
+                        <td>
+                            <input type='text' name="intro_text" value=<%=data.intro_text %>>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>핵심 소개문구</td>
+                        <td>
+                            <input type='text' name="intro_sentence" value=<%=data.intro_sentence %>>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>활동내용</td>
+                        <td>
+                            <input type='text' name="activity_info" value=<%=data.activity_info %>>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>모임시간</td>
+                        <td>
+                            <input type='text' name="meeting_time" value=<%=data.meeting_time %>>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>모임장소</td>
+                        <td>
+                            <input type='text' name="activity_location" value=<%=data.activity_location %>>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>활동인원</td>
+                        <td>
+                            <input type='text' name="acticity_num" value=<%=data.activity_num %>>
+
+                        </td>
+                    </tr>
+                    <tr class="category">
+                        <td colspan="2">리쿠르팅</td>
+                    </tr>
+                    <tr>
+                        <td>모집시기</td>
+                        <td>
+                            <input type='text' name="recruit_season" value=<%=data.recruit_season %>>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>의무활동기간</td>
+                        <td>
+                            <input type='text' name="activity_period" value=<%=data.activity_period %>>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>모집방식</td>
+                        <td>
+                            <input type='text' name="recruit_process" value=<%=data.recruit_process %>>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>모집인원</td>
+                        <td>
+                            <input type='text' name="recruit_num" value=<%=data.recruit_num %>>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>리쿠르팅 사이트</td>
+                        <td>
+                            <input type='text' name="recruit_site" value=<%=data.recruit_site %>>
+
+                        </td>
+                    </tr>
+                    <tr class="category">
+                        <td colspan="2">연락처/사이트</td>
+                    </tr>
+                    <tr>
+                        <td>대표자 이름</td>
+                        <td>
+                            <input type='text' name="president_name" value=<%=data.president_name %>>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>대표자 연락처</td>
+                        <td>
+                            <input type='text' name="president_contact" value=<%=data.president_contact %>>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>긴급연락처</td>
+                        <td>
+                            <input type='text' name="emergency_contact" value=<%=data.emergency_contact %>>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>동아리 웹페이지1</td>
+                        <td>
+                            <input type='text' name="website_link" value=<%=data.website_link %>>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>동아리 웹페이지2</td>
+                        <td>
+                            <input type='text' name="website_link2" value=<%=data.website_link2 %>>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="text-align:center">
+                <button onclick="location.href='/getOne'">메인으로</button>
+                <input type="submit" id="button" value="저장하기">
+                <div>
+        </form>
+</body>
+
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="pwd.js"></script>
+</head>
+
+<body>
+    <%-include ('header.ejs') %>
+        <form method="post" action="/changePWD">
+            <p>새로운 비밀번호 입력</p>
+            <input type="password" id="pwd1" name="pwd1">
+            <span id="wrongPWD" style="visibility: hidden;">비밀번호의 형식이 잘못되었습니다</span>
+            <p>비밀번호 재입력</p>
+            <input type="password" id="pwd2" name="pwd2" onkeyup="validatePWD2()" name="pwd1">
+            <span id="wrongPWD2" style="display: none;">비밀번호가 다릅니다</span>
+            <input type="submit" id="submit" name="submit" disabled>
+        </form>
+        <script>
+            const pwd1 = document.getElementById("pwd1")
+            const pwd2 = document.getElementById("pwd2")
+            pwd1.onkeyup = function() {
+                if (pwd1.value.length < 6)
+                    document.getElementById("wrongPWD").style.visibility = "visible";
+                else
+                    document.getElementById("wrongPWD").style.visibility = "hidden";
+                if (pwd2.value.length != 0)
+                    validatePWD2()
+            }
+        </script>
+</body>
+
+</html>

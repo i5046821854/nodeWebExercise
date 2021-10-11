@@ -12,6 +12,7 @@ const MySQLStore = require('express-mysql-session')(session);
 const { uploadFile, getFileStream, deleteFile } = require('./s3.js')
 const data = fs.readFileSync('./database.json')
 const conf = JSON.parse(data)
+const path = require('path')
 
 // const bodyparser = require('body-parser')
 // app.use(bodyparser.json())
@@ -27,7 +28,7 @@ const isAuthenticated = (req, res, next) => {
 app.set("view engine", "ejs");
 
 // "ejs"로 변경 후 "html" 파일로 열 수 있게 렌더링
-app.engine("html", require("ejs").renderFile);
+//app.engine("html", require("ejs").renderFile);
 
 const PORT = 3000 || process.env.PORT
 
@@ -36,8 +37,10 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
 
+const Dirpath = path.join(__filename, "../")
+app.use(express.static(Dirpath))
 app.set('view engine', 'ejs');
-app.engine('html', require('ejs').renderFile);
+//app.engine('html', require('ejs').renderFile);
 
 const aws = require('aws-sdk');
 const { CloudFront } = require('aws-sdk')
@@ -77,7 +80,7 @@ app.use(
 app.get('', (req, res) => {
     let sql = "SELECT * FROM CLUBLIST"
     db.query(sql, (err, result) => {
-        res.render("index.html", {
+        res.render("index.ejs", {
             result: JSON.parse(JSON.stringify(result)),
             bucket: process.env.AWS_BUCKET_NAME,
             region: process.env.AWS_BUCKET_REGION
@@ -86,7 +89,31 @@ app.get('', (req, res) => {
     })
 })
 
+app.get('/changePWD', (req, res) => {
+    res.render('changePWD.ejs', {
+        pwd: req.session.user.admin_pw
+    });
+})
 
+app.post('/changePWD', (req, res) => {
+    const pwd = req.body.pwd1
+    bcrypt.genSalt(10, function(err, salt) {
+        if (err)
+            res.send("<script>alert('에러발생1');window.location.href='/changePWD';</script>")
+        bcrypt.hash(pwd, salt, function(err, hashedPWD) {
+            if (err) {
+                console.log(pwd)
+                res.send("<script>alert('에러발생2');window.location.href='/changePWD';</script>")
+            }
+            let sql = `update CLUB_OLD set admin_pw = "${hashedPWD}" WHERE cid = ${req.session.user.cid}`
+            db.query(sql, async(err, result) => {
+                if (err)
+                    console.log(err);
+                res.send("<script>alert('성공적으로 변경되었습니다');window.location.href='/login';</script>")
+            })
+        })
+    })
+})
 
 async function copy() {
     let sql = "SELECT * FROM POST"
@@ -97,11 +124,11 @@ async function copy() {
 }
 
 app.get('/create', upload.single('logo'), (req, res) => {
-    res.render('create.html')
+    res.render('create.ejs')
 })
 
 app.get('/login', (req, res) => {
-    res.render('login.html');
+    res.render('login.ejs');
 })
 
 const login = async function(id, pw) {
@@ -132,8 +159,6 @@ app.post('/login', async(req, res) => {
         req.session.user = result
         res.cookie('cnt', 0)
         if (result.authority > 3) {
-            console.log("asd")
-            console.log(req.session.user)
             res.redirect("/getOne")
                 // res.redirect(url.format({
                 //     pathname: "/getOne",
@@ -153,28 +178,51 @@ app.post('/login', async(req, res) => {
         } else {
             res.cookie('cnt', Number(req.cookies.cnt) + 1)
         }
-        console.log(req.cookies.cnt)
         res.send(`<script> alert("다시 입력"); window.location.href='/login'; </script>`)
     }
 })
 
 app.get('/getOne', (req, res) => {
-    console.log()
-    res.render('data.html', {
-        data: JSON.parse(JSON.stringify(req.session.user))
+    let sql = `select * from CLUB_OLD WHERE cid = ${req.session.user.cid}`
+    db.query(sql, async(err, result) => {
+        if (err)
+            console.log(err);
+        req.session.user = result[0]
+        res.render('data.ejs', {
+            data: JSON.parse(JSON.stringify(result[0]))
+        })
     })
 })
 
 app.get('/updateData', (req, res) => {
-    console.log(req.query)
-    res.render('data2.html', {
-        data: JSON.parse(JSON.stringify(req.query))
+    res.render('data2.ejs', {
+            data: JSON.parse(JSON.stringify(req.session.user))
+        })
+        // let sql = `select * from CLUB_OLD WHERE cid = ${req.session.user.cid}`
+        // db.query(sql, async(err, result) => {
+        //     if (err)
+        //         console.log(err);
+        //     res.render('data2.ejs', {
+        //         data: JSON.parse(JSON.stringify(result[0]))
+        //     })
+        // })
+})
+
+app.post('/updateData', (req, res) => {
+    console.log(req.body)
+    const data = req.body
+    let sql = `update CLUB_OLD SET cname = "${data.cname}", category1= "${data.category1}", category2 = "${data.category2}", category3 = "${data.category3}", campus = "${data.campus}", estab_year = "${data.estab_year}",intro_text = "${data.intro_text}", intro_sentence = "${data.intro_sentence}", activity_info = "${data.activity_info}", meeting_time = "${data.meeting_time}", activity_location = "${data.activity_location}", activity_num = "${data.acticity_num}", recruit_season = "${data.recruit_season}", activity_period = "${data.activity_period}", recruit_process = "${data.recruit_process}", recruit_num = "${data.recruit_num}", recruit_site = "${data.recruit_site}", president_name = "${data.president_name}", president_contact = "${data.president_contact}", emergency_contact = "${data.emergency_contact}", website_link = "${data.website_link}", website_link2 = "${data.website_link2}"  WHERE cid = ${data.cid} `
+    db.query(sql, async(err, result) => {
+        console.log(sql);
+        if (err)
+            console.log(err);
+        res.redirect('/getOne')
     })
 })
 
 
 app.get('/getAll', (req, res) => {
-    res.render('dataTable.html')
+    res.render('dataTable.ejs')
 })
 
 app.post('/add', upload.single("logo"), async(req, res) => {
@@ -194,7 +242,7 @@ app.get('/update', async(req, res) => {
         /*const club = skkclub.forEach(each=>{
             return each.id == req.query.id
         })*/
-    res.render("update.html", {
+    res.render("update.ejs", {
 
     })
 })
