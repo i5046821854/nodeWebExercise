@@ -10,7 +10,8 @@
 </head>
 
 <body>
-    <%-include ('header.ejs') %>
+    <%-include ('./partials/header', {menu:"changePWD"}) %>
+        <h1 style="text-align: center; margin-top:2%">비밀번호 변경</h1>
         <form method="post" action="/changePWD">
             <p>새로운 비밀번호 입력</p>
             <input type="password" id="pwd1" name="pwd1">

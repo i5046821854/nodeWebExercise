@@ -39,7 +39,8 @@
 </head>
 
 <body>
-    <%- include('./partials/header') %>
+    <%- include('./partials/header', {menu:"update"}) %>
+        <h1 style="text-align: center; margin-top:2%">수정</h1>
         <form method="POST" action="/updateData">
             <table>
                 <colgroup>
@@ -83,7 +84,22 @@
                     <tr>
                         <td>캠퍼스</td>
                         <td>
-                            <input type='text' name="campus" value=<%=data.campus %>>
+                            <input type="checkbox" id='m' name="campus" value="명륜" onclick="clickCheck(this)">명륜
+                            <input type="checkbox" id='y' name="campus" value="율전" onclick="clickCheck(this)">율전
+                            <input type="checkbox" id='my' name="campus" value="명륜, 율전" onclick="clickCheck(this)">명륜,율전
+                            <% if(data.campus == "명륜") {%>
+                                <script>
+                                    document.getElementById('m').checked = true
+                                </script>
+                                <% } else if(data.campus == "율전") { %>
+                                    <script>
+                                        document.getElementById('y').checked = true
+                                    </script>
+                                    <% } else { %>
+                                        <script>
+                                            document.getElementById('m').checked = true
+                                        </script>
+                                        <% } %>
                         </td>
                     </tr>
                     <tr>
@@ -217,9 +233,17 @@
             </table>
             <div style="text-align:center">
                 <button onclick="location.href='/getOne'">메인으로</button>
-                <input type="submit" id="button" value="저장하기">
+                <input type="submit" id="button" value="저장하기" onclick="return confirm('저장하시겠습니까?');">
                 <div>
         </form>
 </body>
+<script>
+    function clickCheck(target) {
+        document.getElementsByName("campus").forEach((element) => {
+            element.checked = false;
+        })
+        target.checked = true;
+    }
+</script>
 
 </html>

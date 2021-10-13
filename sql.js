@@ -43,7 +43,8 @@ app.set('view engine', 'ejs');
 //app.engine('html', require('ejs').renderFile);
 
 const aws = require('aws-sdk');
-const { CloudFront } = require('aws-sdk')
+const { CloudFront } = require('aws-sdk');
+const { networkInterfaces } = require('os');
 const s3 = new aws.S3()
 
 
@@ -64,6 +65,13 @@ const db = mysql.createConnection({
 const auth = function(req, res, next) {
     if (!req.session.user)
         res.send("<script>alert('로그인 후 이용가능합니다');window.location.href='/login';</script>")
+    else
+        next();
+}
+
+const authAdmin = function(req, res, next) {
+    if (req.session.user.authority <= 3)
+        res.send(`res.send("<script>alert('접근 권한이 없습니다');window.location.href="javascript:window.history.back();";</script>")`);
     else
         next();
 }
@@ -171,18 +179,14 @@ app.post('/login', async(req, res) => {
     if (result.cid) {
         req.session.user = result
         res.cookie('cnt', 0)
-        if (result.authority > 3) {
+        if (result.authority <= 3) {
             res.redirect("/getOne")
                 // res.redirect(url.format({
                 //     pathname: "/getOne",
                 //     query: result
                 // }))
         } else {
-            console.log("asd")
-            res.redirect(url.format({
-                pathname: "/getOne",
-                query: result
-            }))
+            res.redirect('/getAll')
         }
         //res.redirect('/getAll')
     } else {
@@ -234,7 +238,7 @@ app.post('/updateData', (req, res) => {
 })
 
 
-app.get('/getAll', auth, (req, res) => {
+app.get('/getAll', auth, authAdmin, (req, res) => {
     res.render('dataTable.ejs')
 })
 
