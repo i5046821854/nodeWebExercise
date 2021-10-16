@@ -92,17 +92,25 @@ app.use(
     })
 )
 
-app.get('', (req, res) => {
-    let sql = "SELECT * FROM CLUBLIST"
-    db.query(sql, (err, result) => {
-        res.render("index.ejs", {
-            result: JSON.parse(JSON.stringify(result)),
-            bucket: process.env.AWS_BUCKET_NAME,
-            region: process.env.AWS_BUCKET_REGION
+// app.get('', (req, res) => {
+//     let sql = "SELECT * FROM CLUBLIST"
+//     db.query(sql, (err, result) => {
+//         res.render("index.ejs", {
+//             result: JSON.parse(JSON.stringify(result)),
+//             bucket: process.env.AWS_BUCKET_NAME,
+//             region: process.env.AWS_BUCKET_REGION
 
-        })
-    })
+//         })
+//     })
+// })
+
+app.get('', (req, res) => {
+    if (req.session.user)
+        res.redirect("/getOne")
+    else
+        res.redirect("/login")
 })
+
 
 app.get('/changePWD', auth, (req, res) => {
     res.render('changePWD.ejs', {
@@ -117,14 +125,12 @@ app.post('/changePWD', (req, res) => {
             res.send("<script>alert('에러발생1');window.location.href='/changePWD';</script>")
         bcrypt.hash(pwd, salt, function(err, hashedPWD) {
             if (err) {
-                console.log(pwd)
                 res.send("<script>alert('에러발생2');window.location.href='/changePWD';</script>")
             }
             let sql = `update CLUB_OLD set admin_pw = "${hashedPWD}" WHERE cid = ${req.session.user.cid}`
             db.query(sql, async(err, result) => {
                 if (err)
-                    console.log(err);
-                req.session.user = undefined
+                    req.session.user = undefined
                 res.send("<script>alert(`성공적으로 변경되었습니다.\n다시 로그인 해주세요`);window.location.href='/login';</script>")
             })
         })
@@ -195,7 +201,7 @@ app.post('/login', async(req, res) => {
         } else {
             res.cookie('cnt', Number(req.cookies.cnt) + 1)
         }
-        res.send(`<script> alert("다시 입력"); window.location.href='/login'; </script>`)
+        res.send(`<script> alert("그런 계정은 없습니다"); window.location.href='/login'; </script>`)
     }
 })
 
@@ -226,11 +232,9 @@ app.get('/updateData', auth, (req, res) => {
 })
 
 app.post('/updateData', (req, res) => {
-    console.log(req.body)
     const data = req.body
     let sql = `update CLUB_OLD SET cname = "${data.cname}", category1= "${data.category1}", category2 = "${data.category2}", category3 = "${data.category3}", campus = "${data.campus}", estab_year = "${data.estab_year}",intro_text = "${data.intro_text}", intro_sentence = "${data.intro_sentence}", activity_info = "${data.activity_info}", meeting_time = "${data.meeting_time}", activity_location = "${data.activity_location}", activity_num = "${data.acticity_num}", recruit_season = "${data.recruit_season}", activity_period = "${data.activity_period}", recruit_process = "${data.recruit_process}", recruit_num = "${data.recruit_num}", recruit_site = "${data.recruit_site}", president_name = "${data.president_name}", president_contact = "${data.president_contact}", emergency_contact = "${data.emergency_contact}", website_link = "${data.website_link}", website_link2 = "${data.website_link2}"  WHERE cid = ${data.cid} `
     db.query(sql, async(err, result) => {
-        console.log(sql);
         if (err)
             console.log(err);
         res.redirect('/getOne')
@@ -255,10 +259,9 @@ app.post('/add', upload.single("logo"), async(req, res) => {
 
 
 app.get('/update', async(req, res) => {
-    console.log("id: " + req.query.id)
-        /*const club = skkclub.forEach(each=>{
-            return each.id == req.query.id
-        })*/
+    /*const club = skkclub.forEach(each=>{
+        return each.id == req.query.id
+    })*/
     res.render("update.ejs", {
 
     })
@@ -291,13 +294,11 @@ app.post('/update', upload.single("logo"), async(req, res) => {
     db.query(sql, (err, result) => {
         if (err)
             throw err;
-        console.log(result)
         res.redirect('/')
     })
 })
 
 app.post('/updated', (req, res) => {
-    console.log(req.body)
     if (req.body.updatedData !== undefined) {
         req.body.updatedData.forEach((e) => {
             let sql =

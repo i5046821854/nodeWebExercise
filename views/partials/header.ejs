@@ -1,8 +1,8 @@
 <div>
-    <a href="/getOne">조회</a>
-    <a href="/updateData">수정</a>
-    <a href="/changePWD">비밀번호 변경</a>
-    <a href="/getAll">관리자 페이지</a>
+    <span><a class="link" href="/getOne" style="color: black;">조회</a></span>
+    <span><a  class="link" href="/updateData" style="color: black;">수정</a></span>
+    <span><a class="link" href="/changePWD" style="color: black;">비밀번호 변경</a></span>
+    <span><a class="link" href="/getAll" style="color: black;">관리자 페이지</a></span>
     <% if (menu != "login") { %>
         <button onclick="location.href='/logout'" style="display: inline; margin-top: 0px; margin-bottom: 5px; float:right; width: 20%; background-color: lightgrey;">로그아웃</button>
         <% } %>

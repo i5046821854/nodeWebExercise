@@ -21,7 +21,7 @@ function validatePWD2() {
     const btn = document.getElementById('submit')
     if (val1 == val2) {
         document.getElementById("wrongPWD2").style.display = "none";
-        if (document.getElementById("wrongPWD").style.visibility == "hidden")
+        if (document.getElementById("wrongPWD").style.display == "none")
             btn.disabled = false
     } else {
         document.getElementById("wrongPWD2").style.display = "inline-block";
