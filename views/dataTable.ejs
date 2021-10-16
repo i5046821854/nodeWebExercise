@@ -112,23 +112,31 @@
                         <h4 class="modal-title" id="myModalLabel">상세보기</h4>
                     </div>
                     <div class="modal-body">
-                        <table id="table" style="width:75%">
-                            <thead>
-                                <tr>
-                                    <th>동아리명</th>
-                                    <th>대분류</th>
-                                    <th>중분류</th>
-                                    <th>소분류</th>
-                                    <th>캠퍼스</th>
-                                </tr>
-                            </thead>
+                        <table id="table" style="table-layout: auto; width: 100%; table-layout: fixed;">
+                            <colgroup>
+                                <col width: 18%>
+                                <col width: 82%>
+                            </colgroup>
                             <tbody>
                                 <tr>
+                                    <td style="width: 20%;">동아리명</td>
                                     <td id="name"></td>
-                                    <td id="cate1"></td>
-                                    <td id="cate2"></td>
-                                    <td id="cate3"></td>
-                                    <td id="campus"></td>
+                                </tr>
+                                <tr>
+                                    <td>핵심 소개문구</td>
+                                    <td id="intro_sentence"></td>
+                                </tr>
+                                <tr>
+                                    <td>소개글</td>
+                                    <td id="intro_text"></td>
+                                </tr>
+                                <tr>
+                                    <td>활동장소</td>
+                                    <td id="activity_location"></td>
+                                </tr>
+                                <tr>
+                                    <td>모집시기</td>
+                                    <td id="recruit_season"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -234,10 +242,10 @@
                 $('#table').on('click', 'td button', function() {
                     var data = myDataTable.row($(this).parents('tr')).data();
                     document.getElementById('name').innerHTML = data['cname'];
-                    document.getElementById('cate1').innerHTML = data['category1'];
-                    document.getElementById('cate2').innerHTML = data['category2'];
-                    document.getElementById('cate3').innerHTML = data['category3'];
-                    document.getElementById('campus').innerHTML = data['campus'];
+                    document.getElementById('intro_sentence').innerHTML = data['intro_sentence'];
+                    document.getElementById('intro_text').innerHTML = data['intro_text'];
+                    document.getElementById('activity_location').innerHTML = data['activity_location'];
+                    document.getElementById('recruit_season').innerHTML = data['recruit_season'];
                     $('#modalBox').modal('show');
 
                 });
