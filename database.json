@@ -1,7 +1,0 @@
-{
-    "host":"skklub-testdb.cdga0jdfgjjn.ap-northeast-2.rds.amazonaws.com",
-    "user": "likelion",
-    "password" : "lionlike147",
-    "post" : "3306",
-    "database" : "CLUB"
-}
